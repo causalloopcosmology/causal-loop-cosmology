@@ -1,0 +1,13 @@
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+*.ipynb_checkpoints
+*.log
+*.aux
+*.out
+*.toc
+*.pdf
+data/simulation_results/*
+markdown/*
