@@ -1,7 +1,6 @@
 \documentclass[11pt, a4paper]{article}
-\usepackage{amsmath, amssymb, amsthm, geometry, algorithm, algcompatible, graphicx}
+\usepackage{amsmath, amssymb, amsthm, geometry, algorithm, algcompatible, graphicx, hyperref}
 \usepackage[utf8]{inputenc}
-\usepackage{hyperref}
 \geometry{a4paper, margin=1in}
 
 \newtheorem{theorem}{Theorem}[section]
@@ -12,9 +11,11 @@
 
 \newcommand{\tr}{\mathrm{tr}}
 \newcommand{\id}{\mathrm{id}}
+\newcommand{\degin}{\mathrm{deg}_{\mathrm{in}}}
+\newcommand{\degout}{\mathrm{deg}_{\mathrm{out}}}
 
 \title{\textbf{Thermodynamic Graph Rewriting: A Category-Theoretic Model of Emergent Spacetime}}
-\author{}
+\author{R. Fisher}
 \date{September 9, 2025}
 \maketitle
 
@@ -28,10 +29,12 @@ We define the causal graph $G_t = (V_t, E_t)$ at logical time $t$, where $V_t$ i
 
 \begin{definition}[Causal Category $\mathcal{C}_t$]
 The causal category $\mathcal{C}_t$ is defined by:
-\item \textbf{Objects}: $\mathrm{Obj}(\mathcal{C}_t) = V_t$,
+\begin{itemize}
+    \item \textbf{Objects}: $\mathrm{Obj}(\mathcal{C}_t) = V_t$,
     \item \textbf{Morphisms}: finite directed paths $p: v \to w$,
     \item \textbf{Identity}: $\id_v: v \to v$ is the null path (a formal device for category theory, not a physical self-loop),
     \item \textbf{Composition}: path concatenation $q \circ p: u \to w$ for $p: u \to v$, $q: v \to w$.
+\end{itemize}
 \end{definition}
 
 \begin{proposition}
@@ -54,6 +57,8 @@ $\ell_v$ is a path of length 3 from $v$ to itself, distinct from the null path $
 
 \section{The Rewrite Rule as a Stochastic Process}
 
+The rewrite rule $\mathcal{R}$ is not a standard categorical functor, as it creates new morphisms probabilistically. It is best described as a **state-dependent stochastic process** acting on the causal category.
+
 \begin{definition}[Shortcut Rule]
 If $(u \to w)$ and $(w \to v)$ are edges in $E_t$, the rule may add a new edge $(u \to v)$, subject to thermodynamic and geometric constraints.
 \end{definition}
@@ -66,7 +71,7 @@ Adding $(u,v)$ closes only preexisting two-step paths. Since no path $v \to u$ e
 \end{proof}
 
 \begin{remark}
-The rewrite rule is not a categorical functor in the standard sense, since it is probabilistic and state-dependent. It is better described as a stochastic process acting on categories. This construction parallels causal set dynamics, where the Hasse diagram evolves via random growth.
+This formulation aligns with algebraic graph rewriting, particularly the Single-Pushout (SPO) approach, where rules are defined as partial graph morphisms \cite{ehrig1997algebraic}. It contrasts with the Wolfram Physics Project's hypergraph rewriting \cite{wolfram2020}, as our model uses directed graphs and thermodynamic constraints rather than abstract hypergraphs and computational irreducibility.
 \end{remark}
 
 \section{Matrix Formulation}
@@ -101,6 +106,8 @@ For adjacency $A_t$ with $\tr(A_t^3)=0$, adding edge $(5,2)$ closes $2 \to 4 \to
 The causal boundary $\partial G_t$ consists of nodes with out-degree zero. The causal depth $l_c(v)$ of node $v$ is the length of the shortest path to $\partial G_t$.
 \end{definition}
 
+The threshold condition $\rho_C(u) + \rho_C(v) > \theta$ introduces a 'rich-get-richer' dynamic, favoring the formation of new edges between nodes already embedded in geometrically active regions. This promotes the nucleation of localized clusters of curvature, a mechanism analogous to gravitational condensation in the early universe.
+
 \begin{algorithm}[H]
 \caption{Rewrite Rule $\mathcal{R}$: Parallel Update}
 \begin{algorithmic}[1]
@@ -120,7 +127,7 @@ The causal boundary $\partial G_t$ consists of nodes with out-degree zero. The c
     \EndIf
 \EndFor
 \State Return $G_{t+1}$ with all proposed edges added
-\end{algorithmic}
+\end{ganttchart}\end{algorithmic}
 \end{algorithm}
 
 \begin{algorithm}[H]
@@ -138,6 +145,10 @@ The causal boundary $\partial G_t$ consists of nodes with out-degree zero. The c
 \end{algorithmic}
 \end{algorithm}
 
+\begin{remark}
+The computational complexity is $\mathcal{O}\left(\sum_w \degin(w) \cdot \degout(w)\right)$, which is not in general linear in $|E_t|$. The algorithm is highly parallelizable, with each node $w$ processed independently.
+\end{remark}
+
 \section{Simulation on a 10-Node Graph}
 We simulate $\mathcal{R}$ on an initial 10-node acyclic graph with average degree 2.8. After 10 update steps, the system undergoes a dynamical transition: from a purely acyclic state to one with four distinct 3-cycles. No cycles of length $>3$ were produced. This demonstrates that maximal parallelism preserves symmetry while permitting nucleation of geometry. Code is available at: \href{https://github.com/causalloopcosmology/causal-loop-cosmology}{\texttt{github.com/causalloopcosmology/causal-loop-cosmology}}.
 
@@ -146,10 +157,20 @@ We simulate $\mathcal{R}$ on an initial 10-node acyclic graph with average degre
 In natural units $\hbar=c=l_P=1$, the model’s constants reduce to dimensionless order-unity quantities.
 
 \begin{proposition}[Derived Relations]
-\item \textbf{Local Action}: $\mathcal{A}(v) = \rho_C(v) \, l_c(v)$
+\begin{itemize}
+    \item \textbf{Local Action}: $\mathcal{A}(v) = \rho_C(v) \, l_c(v)$
     \item \textbf{Discrete Curvature}: $R(v) = \sum_{u \in \mathcal{N}(v)} \kappa(v,u)$, with Ollivier–Ricci curvature $\kappa(v,u) = 1 - W_1(m_v,m_u)/d(v,u)$.
     \item \textbf{Mass}: $m(\mathcal{C}) = \sum_{v\in\mathcal{C}} \rho_C(v)$ for a cluster $\mathcal{C}$.
+\end{itemize}
 \end{proposition}
+
+\begin{remark}
+The emergent temperature $T = 1 / \ln(|V_t|)$ reflects the system's information capacity. As the number of nodes $|V_t|$ increases, the combinatorial complexity of the causal network grows, and $T$ decreases, mirroring the behavior of temperature in finite systems where it scales inversely with entropy. This definition is consistent with models of discrete systems where temperature emerges from the logarithmic scaling of state space volume \cite{jaynes1957information}.
+\end{remark}
+
+\begin{remark}
+While the Ollivier-Ricci curvature provides a valuable geometric measure of the resulting graph, incorporating it directly into the rewrite rule's free energy calculation is a non-trivial extension left for future investigation. Doing so would replace the local 3-cycle density $\rho_C(v)$ with a more refined, neighborhood-based curvature measure, potentially leading to smoother geometric convergence.
+\end{remark}
 
 \begin{remark}[Falsifiability]
 The model makes falsifiable predictions when restored to SI units. The most direct signature is a stochastic GW spectrum $\Omega_{\mathrm{GW}}(f)\propto f^3$ (Sec.~\ref{subsec:gw_spectrum}), testable by detectors across a wide frequency range.
@@ -179,6 +200,8 @@ We conjecture that in the limit $N \to \infty$, the process converges statistica
 \bibitem{Carlip2017} S. Carlip, ``Dimension and Dimensional Reduction in Quantum Gravity,'' \textit{Class. Quant. Grav.} \textbf{34}, 193001 (2017).
 \bibitem{Bombelli1987} L. Bombelli, J. Lee, D. Meyer, and R. Sorkin, ``Space-time as a causal set,'' \textit{Phys. Rev. Lett.} \textbf{59}, 521 (1987).
 \bibitem{Dowker2005} F. Dowker, ``Causal sets and the deep structure of spacetime,'' in \textit{100 Years of Relativity: Space-Time Structure: Einstein and Beyond}, ed. A. Ashtekar, World Scientific (2005).
+\bibitem{ehrig1997algebraic} H. Ehrig et al., \textit{Handbook of Graph Grammars and Computing by Graph Transformation}, World Scientific (1997).
+\bibitem{wolfram2020} S. Wolfram, \textit{A Project to Find the Fundamental Theory of Physics}, Wolfram Media (2020).
+\bibitem{jaynes1957information} E. T. Jaynes, ``Information Theory and Statistical Mechanics,'' \textit{Phys. Rev.} \textbf{106}, 620 (1957).
 \end{thebibliography}
-
 \end{document}
