@@ -1,36 +1,36 @@
 #!/usr/bin/env sage
 # -----------------------------------------------------------------------------
-# Causal Loop Cosmology - Model A Simulation (Corrected SageMath Version)
+# Causal Loop Cosmology - Statistical Ensemble Analysis (Final Version)
 #
 # Author:      [Author Name]
 # Date:        September 10, 2025
-#
-# Description: This script implements the "Inflationary Geometrogenesis" model
-#              (Model A). It leverages SageMath's optimized libraries for
-#              performance and scalability.
 # -----------------------------------------------------------------------------
 
-from sage.all import DiGraph, log, exp, random, set_random_seed
+from sage.all import DiGraph, log, exp, random, set_random_seed, Integer, histogram, line, show
 import time
 import csv
+import math
+import numpy as np
+import os
 
 # --- CONFIGURATION ---
-SIMULATION_CONFIG = {
+ENSEMBLE_CONFIG = {
+    "NUM_RUNS": 100,  # Set for a full, statistically significant run.
     "NUM_NODES_APPROX": 40,
     "SIMULATION_STEPS": 50,
     "ALPHA": 1.0,
-    "RANDOM_SEED": 42,
-    "OUTPUT_FILENAME": "simulation_results_sage.csv"
+    "OUTPUT_FIGURE": "figure_n3_distribution.pdf",
+    "TIME_SERIES_FIGURE": "inflation_time_series.pdf"  # Simplified to current dir
 }
 
+# --- CORE SIMULATION LOGIC ---
+
 def generate_zpi_vacuum(num_nodes_approx):
-    """Generates the pristine ZPI vacuum state using Sage's DiGraph."""
     G = DiGraph()
     root = 0
     G.add_vertex(root)
     levels = [[root]]
     node_id = 1
-
     while G.order() < num_nodes_approx:
         next_level = []
         for parent in levels[-1]:
@@ -47,7 +47,6 @@ def generate_zpi_vacuum(num_nodes_approx):
     return G, levels
 
 def inject_energic_event(G, levels):
-    """Injects a single primordial 3-cycle into the ZPI vacuum."""
     if len(levels) > 2 and len(levels[2]) > 0:
         node_v, node_w, node_u = levels[0][0], levels[1][0], levels[2][0]
         G.add_edge(node_u, node_v)
@@ -58,95 +57,104 @@ def inject_energic_event(G, levels):
     return G
 
 def is_permissible(G, u, v):
-    """Applies the Geometric Purity Constraint using Sage's efficient path-finding."""
-    paths = list(G.all_simple_paths(v, u))
+    paths = list(G.all_simple_paths([v], [u]))
     return len(paths) == 1 and len(paths[0]) == 3
 
-def run_simulation(config):
-    """Executes the core simulation loop using Sage objects and functions."""
-    set_random_seed(config["RANDOM_SEED"])
-    
+def run_single_simulation(config):
     G_acyclic, levels = generate_zpi_vacuum(config["NUM_NODES_APPROX"])
     G = inject_energic_event(G_acyclic, levels)
-    
     N = G.order()
-    # CORRECTED LINE: Convert Sage's symbolic expression to a standard float
     T = float(1.0 / log(N)) if N > 1 else 1.0
-
-    A_initial = G.adjacency_matrix()
-    n3_initial = (A_initial**3).trace() / 3
-
-    print("\n" + "="*80)
-    print("Starting Model A Simulation: Inflationary Geometrogenesis (SageMath)")
-    print(f"Parameters: N={N}, Steps={config['SIMULATION_STEPS']}, α={config['ALPHA']:.2f}, T={T:.3f}")
-    print(f"Initial State: {G.size()} edges, {n3_initial} 3-cycles (N₃)")
-    print("="*80 + "\n")
-    
-    history = [{
-        "step": -1,
-        "n3_count": n3_initial,
-        "edge_count": G.size(),
-        "new_edges_added": 0
-    }]
-
     for step in range(config["SIMULATION_STEPS"]):
         proposal_list = []
         for v, w in G.edges(labels=False):
-            for u in G.successors(w):
+            for u in G.neighbors_out(w):
                 if v != u and not G.has_edge(u, v):
                     if is_permissible(G, u, v):
                         delta_F = config["ALPHA"] - T
-                        P = min(1.0, exp(-delta_F / T))
+                        P = min(1.0, math.exp(-delta_F / T))
                         if random() < P:
                             proposal_list.append((u, v))
-        
         proposal_list = list(set(proposal_list))
-
         if not proposal_list:
-            print(f"Step {step:02d}: System has reached a stable plateau. No valid moves found.")
             break
-            
         G.add_edges(proposal_list)
-        
-        A_current = G.adjacency_matrix()
-        n3_current = (A_current**3).trace() / 3
-        
-        print(f"Step {step:02d}: N₃ = {n3_current:<5} | Edges = {G.size():<5} | New Edges Added: {len(proposal_list)}")
-        
-        history.append({
-            "step": step,
-            "n3_count": n3_current,
-            "edge_count": G.size(),
-            "new_edges_added": len(proposal_list)
-        })
+    A_final = G.adjacency_matrix()
+    return int((A_final**3).trace() / 3)
 
-    return history
+# --- ENSEMBLE EXECUTION AND ANALYSIS ---
 
-def save_results_to_csv(history, filename):
-    """Saves the simulation history to a CSV file."""
-    if not history:
-        return
-    keys = history[0].keys()
-    with open(filename, 'w', newline='') as output_file:
-        dict_writer = csv.DictWriter(output_file, fieldnames=keys)
-        dict_writer.writeheader()
-        dict_writer.writerows(history)
-    print(f"\nFull simulation data saved to '{filename}'")
+def run_ensemble(config):
+    print("="*80)
+    print(f"Running Statistical Ensemble of {config['NUM_RUNS']} Simulations")
+    print("="*80)
+    final_n3_counts = []
+    for i in range(config['NUM_RUNS']):
+        print(f"\r  - Running simulation {i + 1}/{config['NUM_RUNS']}...", end="")
+        final_n3 = run_single_simulation(config)
+        final_n3_counts.append(final_n3)
+    print("\nEnsemble run complete.")
+    
+    # Statistical analysis using NumPy
+    avg_n3 = np.mean(final_n3_counts)
+    std_dev_n3 = np.std(final_n3_counts)
+    median_n3 = np.median(final_n3_counts)
+    min_n3 = np.min(final_n3_counts)
+    max_n3 = np.max(final_n3_counts)
+    
+    # Histogram of final N3 counts
+    heights, bins = np.histogram(final_n3_counts, bins='auto', density=True)
+    max_y = np.max(heights)
+    h = histogram(final_n3_counts, bins='auto', density=True,
+                  title=f"Distribution of Final $N_3$ ({config['NUM_RUNS']} Runs)",
+                  axes_labels=['Final 3-Cycle Count ($N_3$)', 'Probability Density'])
+    mean_line = line([(avg_n3, 0), (avg_n3, max_y)], color='red', linestyle='--', thickness=2, 
+                     legend_label=f'Mean = {avg_n3:.2f}')
+    plot = h + mean_line
+    plot.save(config['OUTPUT_FIGURE'])
+    
+    # Time-series plot (simplified to single run for now)
+    G_acyclic, levels = generate_zpi_vacuum(config["NUM_NODES_APPROX"])
+    G = inject_energic_event(G_acyclic, levels)
+    N = G.order()
+    T = float(1.0 / log(N)) if N > 1 else 1.0
+    n3_history = []
+    for step in range(config["SIMULATION_STEPS"]):
+        n3_history.append(int((G.adjacency_matrix()**3).trace() / 3))
+        proposal_list = []
+        for v, w in G.edges(labels=False):
+            for u in G.neighbors_out(w):
+                if v != u and not G.has_edge(u, v):
+                    if is_permissible(G, u, v):
+                        delta_F = config["ALPHA"] - T
+                        P = min(1.0, math.exp(-delta_F / T))
+                        if random() < P:
+                            proposal_list.append((u, v))
+        proposal_list = list(set(proposal_list))
+        if not proposal_list:
+            break
+        G.add_edges(proposal_list)
+    steps = range(len(n3_history))
+    line_plot = line(zip(steps, n3_history), title="3-Cycle Growth (Single Run)", 
+                     axes_labels=['Step', 'N₃'])
+    line_plot.save(config['TIME_SERIES_FIGURE'])
+    
+    return final_n3_counts
 
 if __name__ == "__main__":
-    print("Causal Loop Cosmology — SageMath Simulation Script")
-    print("=" * 60)
-    
     start_time = time.time()
-    simulation_history = run_simulation(SIMULATION_CONFIG)
+    results = run_ensemble(ENSEMBLE_CONFIG)
     end_time = time.time()
 
     print("\n" + "="*80)
-    print("SIMULATION COMPLETE")
-    print(f"Total time: {end_time - start_time:.2f} seconds")
-    
-    final_state = simulation_history[-1]
-    print(f"Final State: {final_state['n3_count']} 3-cycles, {final_state['edge_count']} edges.")
+    print("STATISTICAL ANALYSIS OF FINAL 3-CYCLE COUNT (N₃)")
+    print(f"Total time for {ENSEMBLE_CONFIG['NUM_RUNS']} runs: {end_time - start_time:.2f} seconds")
     print("="*80)
-    
-    save_results_to_csv(simulation_history, SIMULATION_CONFIG["OUTPUT_FILENAME"])
+    print(f"  Mean               : {np.mean(results):.2f}")
+    print(f"  Standard Deviation : {np.std(results):.2f}")
+    print(f"  Median             : {np.median(results):.0f}")
+    print(f"  Minimum            : {np.min(results)}")
+    print(f"  Maximum            : {np.max(results)}")
+    print("="*80)
+    print(f"\nHistogram plot saved to '{ENSEMBLE_CONFIG['OUTPUT_FIGURE']}'")
+    print(f"Time-series plot saved to '{ENSEMBLE_CONFIG['TIME_SERIES_FIGURE']}'")
