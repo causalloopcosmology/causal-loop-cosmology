@@ -29,12 +29,10 @@ We define the causal graph $G_t = (V_t, E_t)$ at logical time $t$, where $V_t$ i
 
 \begin{definition}[Causal Category $\mathcal{C}_t$]
 The causal category $\mathcal{C}_t$ is defined by:
-\begin{itemize}
-    \item \textbf{Objects}: $\mathrm{Obj}(\mathcal{C}_t) = V_t$,
+\item \textbf{Objects}: $\mathrm{Obj}(\mathcal{C}_t) = V_t$,
     \item \textbf{Morphisms}: finite directed paths $p: v \to w$,
     \item \textbf{Identity}: $\id_v: v \to v$ is the null path (a formal device for category theory, not a physical self-loop),
     \item \textbf{Composition}: path concatenation $q \circ p: u \to w$ for $p: u \to v$, $q: v \to w$.
-\end{itemize}
 \end{definition}
 
 \begin{proposition}
@@ -127,7 +125,7 @@ The threshold condition $\rho_C(u) + \rho_C(v) > \theta$ introduces a 'rich-get-
     \EndIf
 \EndFor
 \State Return $G_{t+1}$ with all proposed edges added
-\end{ganttchart}\end{algorithmic}
+\end{algorithmic}
 \end{algorithm}
 
 \begin{algorithm}[H]
@@ -157,11 +155,9 @@ We simulate $\mathcal{R}$ on an initial 10-node acyclic graph with average degre
 In natural units $\hbar=c=l_P=1$, the model’s constants reduce to dimensionless order-unity quantities.
 
 \begin{proposition}[Derived Relations]
-\begin{itemize}
-    \item \textbf{Local Action}: $\mathcal{A}(v) = \rho_C(v) \, l_c(v)$
+\item \textbf{Local Action}: $\mathcal{A}(v) = \rho_C(v) \, l_c(v)$
     \item \textbf{Discrete Curvature}: $R(v) = \sum_{u \in \mathcal{N}(v)} \kappa(v,u)$, with Ollivier–Ricci curvature $\kappa(v,u) = 1 - W_1(m_v,m_u)/d(v,u)$.
     \item \textbf{Mass}: $m(\mathcal{C}) = \sum_{v\in\mathcal{C}} \rho_C(v)$ for a cluster $\mathcal{C}$.
-\end{itemize}
 \end{proposition}
 
 \begin{remark}
