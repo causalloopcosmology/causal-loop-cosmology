@@ -2,8 +2,8 @@
 # -----------------------------------------------------------------------------
 # Causal Loop Cosmology - Statistical Ensemble Analysis (Final Version)
 #
-# Author:      [Author Name]
-# Date:        September 10, 2025
+# Author:      [R. Fisher]
+# Date:        September 9, 2025
 # -----------------------------------------------------------------------------
 
 from sage.all import DiGraph, log, exp, random, set_random_seed, Integer, histogram, line, show
