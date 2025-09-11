@@ -1,6 +1,6 @@
 #!/usr/bin/env sage
 # -----------------------------------------------------------------------------
-# Causal Loop Cosmology - Statistical Ensemble Analysis (Final Version)
+# Causal Loop Cosmology - Statistical Ensemble Analysis
 #
 # Author:      [R. Fisher]
 # Date:        September 9, 2025
