@@ -11,3 +11,4 @@ __pycache__/
 *.pdf
 data/simulation_results/*
 markdown/*
+.vscode/*
