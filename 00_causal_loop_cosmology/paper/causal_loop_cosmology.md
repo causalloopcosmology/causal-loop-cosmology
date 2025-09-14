@@ -196,9 +196,7 @@ The Register’s holography extends beyond consistency to resolve non-local quan
 
 Spacetime possesses two notions of distance. One is the local distance an observer would traverse. The other is a non-local connection forged by entanglement, encoded in the Register's logic. This predicts a specific entanglement scaling law ($S\_{\\text{ent}} \\propto \\sqrt{n}$, where $n$ is the number of 3-cycles in the entangled subsystem), testable via gravitational wave correlations (§6.4). The emergent spacetime of §4 is precisely the structure that operationally respects both the causal limits of bulk geodesics and the non-local constraints imposed by the Register's entanglement logic. ER=EPR is not a paradox; it is the revelation that reality is built on both.
 
-The targeted suggestions are excellent and will significantly enhance the final draft. I will now generate the complete, revised version of Part 3, meticulously integrating every one of your targeted edits to improve rigor, accessibility, and overall cohesion.
-
------
+---
 
 # **3. Dynamics and Cosmology: Inflationary Geometrogenesis**
 
@@ -259,9 +257,8 @@ Inflation in this model is not an externally applied mechanism; it is the system
 **Figure 9:** The distribution of final 3-cycle counts ($N\_3$) for an ensemble of 1,000 simulation runs. **Note:** Histogram of final $N\_3$ (1000 runs, seed 42, $N=1024$, 50 bins), mean $\\bar{N}\_3 = 481.6$, $\\sigma = 95.2$, skewness 0.12, kurtosis 2.8.
 \<br\>
 
-Your targeted suggestions provide the perfect final polish for this section. By adding these last layers of mathematical and computational detail, we can finalize a version that is both rigorous and accessible. I will now integrate every edit.
 
------
+---
 
 # **4. Emergence of the Continuum Spacetime Manifold**
 
@@ -544,7 +541,7 @@ This appendix details the computational methods used to validate the claims in t
 
 * **Hardware:** Intel i7-12700 CPU (16 cores), 16GB RAM.
 * **Software:** Python 3.11, SageMath 10.3, NetworkX 3.2, NumPy 1.26, SciPy 1.11, Qiskit 0.45.3.
-* **Code Repository:** `[github.com/user/CLC-Simulations]`
+* **Code Repository:** `[https://github.com/causalloopcosmology]`
 
 ---
 
