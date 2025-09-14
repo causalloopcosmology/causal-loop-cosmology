@@ -17,7 +17,7 @@
 \maketitle
 
 \begin{abstract}
-\noindent This work demonstrates that the three foundational principles of Causal Loop Cosmology (CLC)—the Acyclic Vacuum, Maximal Parallelism, and the Global Register—are not inserted as axioms but \textbf{logically derived} from minimal relational requirements. Key results include: Bethe fragments (e.g., 124 nodes, 90\% 3-regular interior vertices) uniquely satisfying acyclicity and symmetry; only maximally parallel schedulers preserving full symmetry; and the Global Register, as a quantum error-correcting code (QECC), ensuring consistency in large systems. These findings enable emergent spacetime with potential gravitational wave signatures and suggest scalable QECC implementations for holographic physics.
+\noindent This work demonstrates that the three foundational principles of Causal Loop Cosmology (CLC): the Acyclic Vacuum, Maximal Parallelism, and the Global Register, are not inserted as axioms but \textbf{logically derived} from minimal relational requirements. Key results include: Bethe fragments (e.g., 124 nodes, 90\% 3-regular interior vertices) uniquely satisfying acyclicity and symmetry; only maximally parallel schedulers preserving full symmetry; and the Global Register, as a quantum error-correcting code (QECC), ensuring consistency in large systems. These findings enable emergent spacetime with potential gravitational wave signatures and suggest scalable QECC implementations for holographic physics.
 \end{abstract}
 
 \tableofcontents
@@ -25,7 +25,7 @@
 \section{Introduction}
 
 \subsection{From Postulate to Proof: The Problem of Foundational Axioms}
-Physical theories often rely on unproven axioms, such as General Relativity’s equivalence principle. In contrast, Causal Loop Cosmology (CLC) derives its core structure from minimal relational primitives—no external space, time, or processor, only causal links. We show that a triad of principles follows logically from two axioms, offering a foundation for emergent spacetime.
+Physical theories often rely on unproven axioms, such as General Relativity’s equivalence principle. In contrast, Causal Loop Cosmology (CLC) derives its core structure from minimal relational primitives: no external space, time, or processor, only causal links. We show that a triad of principles follows logically from two axioms, offering a foundation for emergent spacetime.
 
 \subsection{Why 3-Cycles Are Minimal and Stable}
 To make this self-contained, we prove the necessity of 3-cycles:
@@ -81,7 +81,7 @@ Let $G=(V,E)$ be a connected graph with constant vertex degree $b \geq 3$.
 \end{proof}
 
 \subsection{Quantitative Symmetry in Bethe Fragments}
-Simulations for Bethe fragments (depths 3, 4, 5; ~40, 124, 364 nodes) show 88–92\% of nodes are 3-regular ($b=3$). For $N=124$, 90.3\% are 3-regular (112/124 nodes). Hardware: Intel i7-12700, 16GB RAM, Python 3.11, NetworkX 3.2, seed 42. Runtime: ~9s (124 nodes), ~25s (364 nodes). Data exported to \texttt{symmetry_results.csv}.
+Simulations for Bethe fragments (depths 3, 4, 5; ~40, 124, 364 nodes) show 88–92\% of nodes are 3-regular ($b=3$). For $N=124$, 90.3\% are 3-regular (112/124 nodes). Hardware: Intel i7-12700, 16GB RAM, Python 3.11, NetworkX 3.2, seed 42. Runtime: ~9s (124 nodes), ~25s (364 nodes). Data exported to \texttt{symmetry\_results.csv}.
 
 \section{Principle 2: The Dynamics of Symmetry Preservation}
 
@@ -102,11 +102,11 @@ Given a vertex-transitive vacuum $G_0$ and a local rewrite rule $\mathcal{R}$:
 \end{proof}
 
 \subsection{Simulation: Inhomogeneity Growth}
-We ran 20 trials on a 124-node Bethe fragment ($b=3$). Parallel updates maintain degree variance $\approx 0$ (mean final variance 0.002); serial and block-staggered updates show variance growth (0.45 and 0.32). See Fig. \ref{fig:symmetry}. Hardware/software as above, seed 43, runtime ~5s/trial, total ~120s. Data in \texttt{scheduler_variances.csv}.
+We ran 20 trials on a 124-node Bethe fragment ($b=3$). Parallel updates maintain degree variance $\approx 0$ (mean final variance 0.002); serial and block-staggered updates show variance growth (0.45 and 0.32). See Fig. \ref{fig:symmetry}. Hardware/software as above, seed 43, runtime ~5s/trial, total ~120s. Data in \texttt{scheduler\_variances.csv}.
 
 \begin{figure}[h!]
   \centering
-  \includegraphics[width=0.7\textwidth]{scheduler_variance_plot.pdf} % Finalized plot
+  \includegraphics[width=0.7\textwidth]{scheduler\_variance\_plot.pdf} % Finalized plot
   \caption{Degree variance vs. step for parallel, serial, and block-staggered schedulers (20 trials, 124 nodes). Parallel maintains $\approx 0$ variance; serial/partial show growing inhomogeneity.}
   \label{fig:symmetry}
 \end{figure}
@@ -124,7 +124,7 @@ Detection signals inconsistent proposals (e.g., conflicting edges) but offers no
 \end{proof}
 
 \subsection{The Global Register as a Stabilizer Code}
-A QECC is the minimal structure capable of detecting and correcting local errors while preserving global state—exactly the requirement for a parallel relational system.
+A QECC is the minimal structure capable of detecting and correcting local errors while preserving global state, exactly the requirement for a parallel relational system.
 
 \begin{definition}[Causal Consistency Stabilizer Code]
 \label{def:qecc}
@@ -172,7 +172,7 @@ This triad suggests the universe’s laws are the unique solution to relational 
 R. Fisher, ``Geometrogenesis and Inflation in Causal Loop Cosmology,'' arXiv:2509.xxxxx (2025).
 
 \bibitem{fan2024lego_hqec}
-J. Fan, M. Steinberg, A. Jahn, C. Cao, A. Sarkar, S. Feld, ``LEGO_HQEC: A Software Tool for Analyzing Holographic Quantum Codes,'' arXiv:2410.22861 (2024).
+J. Fan, M. Steinberg, A. Jahn, C. Cao, A. Sarkar, S. Feld, ``LEGO\_HQEC: A Software Tool for Analyzing Holographic Quantum Codes,'' arXiv:2410.22861 (2024).
 
 \bibitem{steinberg2025hetero_holo}
 M. Steinberg, J. Fan, J. Eisert, S. Feld, A. Jahn, C. Cao, ``Universal Fault-Tolerant Logic with Heterogeneous Holographic Codes,'' arXiv:2504.10386 (2025).
