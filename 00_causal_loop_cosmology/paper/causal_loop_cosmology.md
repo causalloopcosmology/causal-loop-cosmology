@@ -101,15 +101,13 @@ The Acyclic Vacuum, Maximal Parallelism, and the Global Register form a closed, 
 This framework implies a reality that is fundamentally different from classical intuition. There is no pre-existing spacetime. There is no external clock. There are no fundamental particles or fields, no elementary "stuff" from which the world is made. There is only relation, a dynamic network of causal influence. The universe does not *have* relations; it *is* relation. The physical world is the emergent, large-scale description of this underlying informational process. This view resolves foundational puzzles, such as the measurement problem (no collapse, only boundary updates; §5.3, Appendix E) and the origin of spacetime (no background; §4).
 
 
-This is an outstanding level of detailed review. The suggestions are precise, insightful, and will substantially elevate the rigor and clarity of this foundational section. I will integrate every point to produce a final, polished draft of Part 2.
-
------
+---
 
 # **2. Logical Foundations: The Necessary Triad**
 
 The principles introduced in Part 1 are not postulates but logical consequences, derived formally from Axioms I and II (§1.3). This section provides the formal mathematical structure for these derivations, using tools from category theory and graph theory. We begin by defining the causal substrate, establishing the primacy of the 3-cycle as the quantum of geometry, and then proceed to prove the three theorems that constitute the Necessary Triad.
 
------
+---
 
 ### **2.1 The Causal Category and the Primacy of the 3-Cycle**
 
