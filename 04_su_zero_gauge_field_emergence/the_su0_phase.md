@@ -13,6 +13,7 @@ Limitations and Future Work
 Conclusion
 References
 
+
 1. Introduction
 Causal Loop Cosmology (CLC) proposes that spacetime emerges from a discrete network of causal relations, without presupposing background geometry \cite{fisher2025}. Paper 1 demonstrated inflationary geometrogenesis, with a primordial 3-cycle triggering complexity that saturates at N_3 ≈ 42 \cite{fisher2025}. Paper 2 formalized the Necessary Triad—Acyclic Vacuum, Maximal Parallelism, Global Register—ensuring consistent evolution \cite{fisher2025triad}. Paper 3 anticipates a 4D pseudo-Riemannian manifold via the Continuum Limit Conjecture (d_S → 4) \cite{fisher2025continuum}.
 The Acyclic Vacuum, approximated by a finite Bethe lattice (b=3, girth > log_3 N), exhibits a unique dual geometry: hyperbolic in the bulk (κ < 0, V(r) ~ 2^r) and flat in the spectral/boundary frame (d_S → 4). This frame-dependent symmetry, absent in other graphs, suggests a capacity to support gauge fields. We hypothesize a pre-geometric SU(0) phase—a null graph with infinite symmetry, aligned with the Ruliad \cite{wolfram2020}—whose breaking seeds the Bethe lattice. As a Ruliad subset, the Bethe lattice’s geometry and dynamics enable gauge-like fields as edge fluctuations, complementing matter fields as topological defects.
