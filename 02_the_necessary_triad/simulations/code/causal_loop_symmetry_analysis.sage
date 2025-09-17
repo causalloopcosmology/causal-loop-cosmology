@@ -1,7 +1,6 @@
-#!/usr/-bin/env sage
+#!/usr/bin/env sage
 # causal_loop_symmetry_analysis.sage
-# SageMath script for symmetry, 3-regularity, and scheduler variance analysis
-# v2.1 - Corrected dictionary keys for robust f-string parsing in Sage
+# v2.2 - Multi-N scaling (N=46,94,190,382), 1000 trials, 20 steps, ANOVA for growth
 
 from sage.all import Graph, floor
 import time
@@ -9,6 +8,8 @@ import csv
 import os
 import random
 import numpy as np
+from scipy import stats
+from math import log2, exp
 
 try:
     from tqdm import tqdm
@@ -49,14 +50,13 @@ def generate_bethe_fragment(depth=5):
 
     regular_count = sum(1 for v in G.vertices() if G.degree(v) == 3)
     regularity_fraction = regular_count / total_nodes
-
     boundary_nodes = len(levels[-1])
     analytical_fraction = (total_nodes - boundary_nodes) / total_nodes
 
     return G, total_nodes, regularity_fraction, analytical_fraction
 
 def _apply_simplified_rewrite(G, vertices_to_update):
-    """Helper function for the simplified rewrite rule."""
+    """Helper function for the simplified rewrite rule (max_degree=3, uniform selection)."""
     edges_to_add = []
     for v in vertices_to_update:
         if G.degree(v) < 3:
@@ -66,11 +66,12 @@ def _apply_simplified_rewrite(G, vertices_to_update):
                 edges_to_add.append((v, new_neighbor))
     G.add_edges(edges_to_add)
 
-def simulate_scheduler_variance(G0, scheduler_type='parallel', num_steps=10, num_trials=20, seed=43):
+def simulate_scheduler_variance(G0, scheduler_type='parallel', num_steps=20, num_trials=1000, seed=43):
     """
-    Simulates degree variance under different schedulers.
+    Simulates degree variance under different schedulers across N.
     """
     random.seed(int(seed))
+    np.random.seed(int(seed))
     
     all_trial_variances = []
     for _ in range(num_trials):
@@ -83,9 +84,9 @@ def simulate_scheduler_variance(G0, scheduler_type='parallel', num_steps=10, num
                 _apply_simplified_rewrite(G, vertices)
             elif scheduler_type == 'serial':
                 random.shuffle(vertices)
-                for v in vertices: # Iterating individually modifies the graph state mid-step
+                for v in vertices:
                     _apply_simplified_rewrite(G, [v])
-            elif scheduler_type == 'partial': # Represents block-staggered
+            elif scheduler_type == 'partial':
                 random.shuffle(vertices)
                 block_size = floor(len(vertices) / 2)
                 block1 = vertices[:block_size]
@@ -101,22 +102,29 @@ def simulate_scheduler_variance(G0, scheduler_type='parallel', num_steps=10, num
     return all_trial_variances
 
 def main():
-    print("Causal Loop Cosmology — Computational Symmetry Analysis (v2.1)")
+    print("Causal Loop Cosmology — Computational Symmetry Analysis (v2.2 - Multi-N Scaling)")
     print("=" * 70)
     
-    output_dir = "outputs"
-    os.makedirs(output_dir, exist_ok=True)
+    CONFIG = {
+        "DEPTHS_TO_TEST": [4, 5, 6, 7],
+        "NUM_TRIALS": 1000,
+        "NUM_STEPS": 20,
+        "SEED": 43,
+        "OUTPUT_DIR": "outputs",
+        "SYMMETRY_CSV": "symmetry_results_v2.2.csv",
+        "SCHEDULER_CSV": "scheduler_variances_v2.2.csv"
+    }
+    
+    os.makedirs(CONFIG["OUTPUT_DIR"], exist_ok=True)
     
     # --- Part 1: Bethe Fragment Analysis ---
-    print("Analyzing Bethe fragments (depths 3-7)...")
+    print("Analyzing Bethe fragments (depths 4-7)...")
     symmetry_results = []
-    depths = [3, 4, 5, 6, 7]
-    for depth in depths:
+    for depth in CONFIG["DEPTHS_TO_TEST"]:
         start_time = time.time()
         G, n_nodes, reg_frac, an_frac = generate_bethe_fragment(depth)
         runtime = time.time() - start_time
         
-        # FIX: Renamed keys to be valid Python identifiers to avoid f-string parsing issues.
         symmetry_results.append({
             'Graph_Type': f'Bethe Fragment (d={depth})',
             'Is_Acyclic': G.is_forest(),
@@ -127,8 +135,8 @@ def main():
             'Runtime_s': runtime
         })
 
-    # Export symmetry results
-    symmetry_csv_path = os.path.join(output_dir, 'symmetry_results.csv')
+    # --- Export symmetry results ---
+    symmetry_csv_path = os.path.join(CONFIG["OUTPUT_DIR"], CONFIG["SYMMETRY_CSV"])
     with open(symmetry_csv_path, 'w', newline='') as f:
         fieldnames = symmetry_results[0].keys()
         writer = csv.DictWriter(f, fieldnames=fieldnames)
@@ -137,29 +145,65 @@ def main():
     print(f"Symmetry data saved to '{symmetry_csv_path}'")
 
     # --- Part 2: Scheduler Variance Analysis ---
-    print("\nRunning scheduler variance simulations (N≈124)...")
-    G_124, _, _, _ = generate_bethe_fragment(depth=4)
-    variances_data = {}
+    print("\nRunning scheduler variance simulations (N=46,94,190,382)...")
+    scheduler_results = []
     
-    for sched in ['parallel', 'serial', 'partial']:
-        print(f"  Simulating '{sched}' scheduler...")
-        all_vars = simulate_scheduler_variance(G_124, scheduler_type=sched, num_steps=10, num_trials=100, seed=43)
-        mean_vars_per_step = [np.mean(step_vars) for step_vars in zip(*all_vars)]
-        variances_data[sched] = mean_vars_per_step
+    for depth in CONFIG["DEPTHS_TO_TEST"]:
+        G0, n_nodes, _, _ = generate_bethe_fragment(depth)
+        print(f"\n--- Processing Depth={depth} (N={n_nodes}) ---")
+        
+        for sched in tqdm(['parallel', 'serial', 'partial'], desc=f"Schedulers (N={n_nodes})"):
+            all_vars = simulate_scheduler_variance(G0, scheduler_type=sched, 
+                                                  num_steps=CONFIG["NUM_STEPS"], 
+                                                  num_trials=CONFIG["NUM_TRIALS"], 
+                                                  seed=CONFIG["SEED"])
+            mean_vars_per_step = [np.mean(step_vars) for step_vars in zip(*all_vars)]
+            std_errs = [np.std(step_vars) / np.sqrt(CONFIG["NUM_TRIALS"]) for step_vars in zip(*all_vars)]
+            ci_95 = [1.96 * se for se in std_errs]
+            
+            for step, mean_var, ci in zip(range(CONFIG["NUM_STEPS"]), mean_vars_per_step, ci_95):
+                scheduler_results.append({
+                    'Depth': depth,
+                    'Nodes': n_nodes,
+                    'Scheduler': sched,
+                    'Step': step + 1,
+                    'Mean_Variance': mean_var,
+                    'CI_Lower': mean_var - ci,
+                    'CI_Upper': mean_var + ci
+                })
 
-    # Export scheduler results
-    scheduler_csv_path = os.path.join(output_dir, 'scheduler_variances.csv')
+    # --- Export scheduler results ---
+    scheduler_csv_path = os.path.join(CONFIG["OUTPUT_DIR"], CONFIG["SCHEDULER_CSV"])
     with open(scheduler_csv_path, 'w', newline='') as f:
-        writer = csv.writer(f)
-        writer.writerow(['Step', 'Parallel_Mean_Variance', 'Serial_Mean_Variance', 'Partial_Mean_Variance'])
-        for i in range(10):
-            writer.writerow([
-                i + 1,
-                variances_data['parallel'][i],
-                variances_data['serial'][i],
-                variances_data['partial'][i]
-            ])
+        fieldnames = scheduler_results[0].keys()
+        writer = csv.DictWriter(f, fieldnames=fieldnames)
+        writer.writeheader()
+        writer.writerows(scheduler_results)
     print(f"Scheduler data saved to '{scheduler_csv_path}'")
+
+    # --- Statistical Analysis ---
+    print("\nStatistical Analysis (Step 20)")
+    final_step_data = [res for res in scheduler_results if res['Step'] == CONFIG["NUM_STEPS"]]
+    for scheduler in ['parallel', 'serial', 'partial']:
+        scheduler_data = [d for d in final_step_data if d['Scheduler'] == scheduler]
+        nodes = [d['Nodes'] for d in scheduler_data]
+        variances = [d['Mean_Variance'] for d in scheduler_data]
+        print(f"\n{scheduler.capitalize()} Variances (Step 20):")
+        for n, v in zip(nodes, variances):
+            print(f"  N={n}: {v:.4f}")
+        
+        # Regression: Variance vs. log N
+        log_nodes = [log2(n) for n in nodes]
+        slope, intercept, r_value, p_value, _ = stats.linregress(log_nodes, variances)
+        print(f"Regression ({scheduler}, Variance vs. log2 N): slope={slope:.3f}, R²={r_value**2:.3f}, p={p_value:.4e}")
+
+    # ANOVA across schedulers at final step
+    parallel_final = [d['Mean_Variance'] for d in final_step_data if d['Scheduler'] == 'parallel']
+    serial_final = [d['Mean_Variance'] for d in final_step_data if d['Scheduler'] == 'serial']
+    partial_final = [d['Mean_Variance'] for d in final_step_data if d['Scheduler'] == 'partial']
+    if parallel_final and serial_final and partial_final:
+        f_stat, p_value = stats.f_oneway(parallel_final, serial_final, partial_final)
+        print(f"\nANOVA (Step 20, across schedulers): F={f_stat:.4f}, p={p_value:.4e} (significant if p<0.05)")
 
     # --- Print Summaries ---
     print("\n" + "="*80)
@@ -168,14 +212,15 @@ def main():
     print(f"{'Graph Type':<20} {'Nodes':<8} {'3-Reg Frac':<12} {'Analytical Frac':<18} {'Runtime (s)':<10}")
     print("-"*80)
     for row in symmetry_results:
-        # FIX: Using the corrected, valid key names.
         print(f"{row['Graph_Type']:<20} {row['Nodes']:<8} {row['Frac_3_Regular']:.2%}{'':<5} {row['Frac_3_Regular_Analytical']:.2%}{'':<9} {row['Runtime_s']:.2f}")
     print("-"*80)
 
-    print("\nSCHEDULER VARIANCE SUMMARY (Final Mean Variance after 10 Steps)")
+    print("\nSCHEDULER VARIANCE SUMMARY (Final Mean Variance after 20 Steps)")
     print("="*50)
-    for sched, data in variances_data.items():
-        print(f"  {sched.capitalize():<10}: {data[-1]:.4f}")
+    for scheduler in ['parallel', 'serial', 'partial']:
+        scheduler_data = [d for d in final_step_data if d['Scheduler'] == scheduler]
+        for d in scheduler_data:
+            print(f"  {scheduler.capitalize():<10} (N={d['Nodes']}): {d['Mean_Variance']:.4f} (CI: {d['CI_Lower']:.4f}–{d['CI_Upper']:.4f})")
     print("="*50)
 
 if __name__ == "__main__":

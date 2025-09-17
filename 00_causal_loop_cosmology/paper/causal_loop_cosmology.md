@@ -70,12 +70,9 @@ These two conditions, acyclicity and maximal symmetry, uniquely specify the vacu
 
 ## **1.2 Maximal Parallelism**
 
-Given a maximally symmetric vacuum, the rule governing its evolution must preserve that symmetry. A sequential, or serial, update scheme is inconsistent with this principle. A serial process requires an ordering, a decision to update node *v* before node *w*. In a homogeneous graph, no such ordering can be derived from intrinsic properties; it must be imposed externally, which introduces an external ordering (a background clock).
+A symmetric vacuum requires an evolution rule that preserves its homogeneity. A serial update scheme, which orders node updates (e.g., node v before w), introduces an external clock, violating relational purity and breaking symmetry. Maximal Parallelism, applying local rewrite rules simultaneously to all nodes, is the only consistent evolution mode, commuting with all vacuum symmetries (Theorem 2.2). Simulations confirm that parallel updates maintain homogeneity better than serial or partial parallel schemes (Fisher 2025b, Appendix C). Time emerges as the depth of causal chains formed through these parallel updates.
 
-This would not only violate the principle of relational purity but also break the vacuum's symmetry. The only mode of evolution consistent with the axioms is one that treats every part of the graph equally: **Maximal Parallelism**, a process where local rewrite rules are applied simultaneously to all nodes. Only parallel updates commute with all symmetries of the vacuum (Theorem 2.2). Simulations confirm this pattern; ensembles show substantially smaller variance under parallel scheduling (see Fig. 2 and Appendix B). Under this paradigm, time itself is not a background parameter but an emergent quantity, operationally defined as the depth of the causal chains formed through discrete, parallel updates.
-
-
-**Figure 2:** Degree variance versus simulation step for different schedulers. **Note:** variance is measured across node degrees per step, with error bands representing ensemble standard deviation. The parallel scheduler (blue) preserves homogeneity, while serial (red) breaks symmetry.
+**Figure 2:** Degree variance over time for different schedulers. Note: Parallel scheduling (blue) preserves homogeneity, while serial (red) and partial parallel (green) break symmetry. Details in Appendix C.
 
 ## **1.3 The Global Register**
 
