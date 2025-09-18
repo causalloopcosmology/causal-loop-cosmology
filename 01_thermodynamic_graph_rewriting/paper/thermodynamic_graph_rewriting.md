@@ -1,7 +1,7 @@
 # **Thermodynamic Graph Rewriting: A Category-Theoretic Model of Emergent Spacetime**
 
 **Author:** R. Fisher
-**Date:** September 16, 2025
+**Date:** September 9, 2025
 
 -----
 
