@@ -1,0 +1,9 @@
+Times[50, =]
+Ensemble Summary for Na^\211\21040
+Times[50, =]
+Mean_N3: 23.8388
+Std_Dev_N3: 16.454
+Median_N3: 22.
+Min_N3: 1
+Max_N3: 84
+Times[50, =]
